@@ -8,6 +8,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -25,9 +26,9 @@ public class JWTFilter extends OncePerRequestFilter {
     //cookie들을 불러온 뒤 Authorization Key에 담긴 쿠키를 찾음
     String authorization = null;
     Cookie[] cookies = request.getCookies();
+
     for (Cookie cookie : cookies) {
       if (cookie.getName().equals("Authorization")) {
-
         authorization = cookie.getValue();
       }
     }
@@ -57,7 +58,7 @@ public class JWTFilter extends OncePerRequestFilter {
     String role = jwtUtils.getRole(token);
 
 
-    //userDTO를 생성하여 값 set
+
     UserResponse userResponse = UserResponse.builder()
         .id(userId)
         .username(username)
