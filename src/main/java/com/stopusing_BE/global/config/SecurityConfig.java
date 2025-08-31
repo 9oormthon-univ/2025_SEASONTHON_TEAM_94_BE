@@ -31,7 +31,8 @@ public class SecurityConfig {
       "/v3/api-docs/**",
       "/swagger-resources/**",
       "/webjars/**",
-      "/favicon.ico"
+      "/favicon.ico",
+        "/api/v1/**"
     };
 
   // CORS 설정
