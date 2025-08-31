@@ -25,6 +25,15 @@ public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomSuccessHandler customSuccessHandler;
 
+    private static final String[] SWAGGER_WHITELIST = {
+      "/swagger-ui/**",
+      "/swagger-ui.html",
+      "/v3/api-docs/**",
+      "/swagger-resources/**",
+      "/webjars/**",
+      "/favicon.ico"
+    };
+
   // CORS 설정
   @Bean
   CorsConfigurationSource corsConfigurationSource() {
@@ -55,9 +64,10 @@ public class SecurityConfig {
             .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig
                 .userService(customOAuth2UserService))
             .successHandler(customSuccessHandler))
-
-        .authorizeHttpRequests( request -> request
+        .authorizeHttpRequests(auth -> auth
             .requestMatchers("/", "/oauth2/**", "/login/**").permitAll()
+            .requestMatchers(SWAGGER_WHITELIST).permitAll()
+            .requestMatchers("/v3/api-docs.yaml").permitAll()
             .anyRequest().authenticated()
         );
 

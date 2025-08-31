@@ -6,6 +6,7 @@ package com.stopusing_BE.global.common.exception;
 //import io.swagger.v3.oas.annotations.Hidden;
 import com.stopusing_BE.global.common.exception.code.ErrorCode;
 import com.stopusing_BE.global.common.exception.response.ApiResponse;
+import io.swagger.v3.oas.annotations.Hidden;
 import java.util.stream.Collectors;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-//@Hidden
+@Hidden
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
