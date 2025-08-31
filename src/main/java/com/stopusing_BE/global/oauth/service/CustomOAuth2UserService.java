@@ -26,6 +26,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     OAuth2User oAuth2User = super.loadUser(userRequest);
 
     OAuth2Response oAuth2Response = new KakaoResponse(oAuth2User.getAttributes());
+
+
     String username = oAuth2Response.getProvider()+"_"+oAuth2Response.getProviderId();
 
     Optional<User> accountOpt = userRepository.findUserByUsername(username);
@@ -33,7 +35,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     if (accountOpt.isEmpty()) {
       User user = User.builder()
           .username(username)
-          .nickname("")
+          .nickname("new")
           .role("ROLE_USER")
           .build();
 
@@ -46,17 +48,18 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
           .role(user.getRole())
           .build();
 
+
       return new CustomOAuth2UserResponse(userResponse);
     }
 
     User existUser = accountOpt.get();
-//    existUser.setNickname(oAuth2Response.getNickname());
     userRepository.save(existUser);
+
 
     UserResponse userResponse = UserResponse.builder()
         .id(existUser.getId())
         .username(username)
-        .nickname(existUser.getNickname())
+        .nickname(username)
         .role(existUser.getRole())
         .build();
 
