@@ -65,7 +65,7 @@ public class SecurityConfig {
                 .userService(customOAuth2UserService))
             .successHandler(customSuccessHandler))
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/", "/oauth2/**", "/login/**").permitAll()
+            .requestMatchers("/", "/oauth2/**", "/login/**", "/**").permitAll()
             .requestMatchers(SWAGGER_WHITELIST).permitAll()
             .requestMatchers("/v3/api-docs.yaml").permitAll()
             .anyRequest().authenticated()
