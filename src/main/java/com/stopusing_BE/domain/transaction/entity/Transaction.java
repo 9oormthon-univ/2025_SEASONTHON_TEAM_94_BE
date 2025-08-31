@@ -3,7 +3,6 @@ package com.stopusing_BE.domain.transaction.entity;
 import com.stopusing_BE.domain.category.entity.Category;
 import com.stopusing_BE.domain.user.entity.User;
 import com.stopusing_BE.global.common.base.BaseEntity;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

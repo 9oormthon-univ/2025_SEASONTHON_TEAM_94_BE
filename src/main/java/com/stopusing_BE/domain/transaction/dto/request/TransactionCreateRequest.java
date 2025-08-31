@@ -1,6 +1,5 @@
 package com.stopusing_BE.domain.transaction.dto.request;
 
-import com.stopusing_BE.domain.transaction.entity.TransactionType;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

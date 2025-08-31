@@ -4,7 +4,6 @@ import com.stopusing_BE.domain.category.dto.request.CategoryCreateRequest;
 import com.stopusing_BE.domain.category.dto.response.CategoryResponse;
 import com.stopusing_BE.domain.category.entity.Category;
 import com.stopusing_BE.domain.category.service.CategoryService;
-import com.stopusing_BE.domain.transaction.dto.response.TransactionResponse;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
