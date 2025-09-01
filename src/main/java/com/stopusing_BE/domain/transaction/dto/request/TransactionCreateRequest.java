@@ -23,8 +23,8 @@ public class TransactionCreateRequest {
   private String title;
 
   @NotNull(message = "사용자 ID는 필수 입력 값입니다.")
-  private Long userId;
+  private String userId;
 
   // 선택: 기존 카테고리들을 연결하려면 ID 목록 전달 (없으면 null/빈 리스트)
-  private List<Long> categoryIds;
+//  private List<Long> categoryIds;
 }
