@@ -25,11 +25,11 @@ public class TransactionService {
 
   @Transactional
   public Transaction create(User user,
-      TransactionCreateRequest request) {
+      TransactionCreateRequest request, TransactionCategory category) {
 
     Transaction transaction = Transaction.builder()
         .type(TransactionType.NONE)
-        .category(TransactionCategory.BEAUTY)
+        .category(category)
         .startedAt(request.getStartAt() != null ? request.getStartAt() : LocalDateTime.now())
         .price(request.getPrice())
         .title(request.getTitle())

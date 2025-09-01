@@ -5,9 +5,11 @@ import com.stopusing_BE.domain.transaction.dto.request.TransactionUpdateRequest;
 import com.stopusing_BE.domain.transaction.dto.response.TransactionCategoryResponse;
 import com.stopusing_BE.domain.transaction.dto.response.TransactionResponse;
 import com.stopusing_BE.domain.transaction.entity.Transaction;
+import com.stopusing_BE.domain.transaction.entity.TransactionCategory;
 import com.stopusing_BE.domain.transaction.entity.TransactionType;
 import com.stopusing_BE.domain.transaction.service.TransactionCategoryService;
 import com.stopusing_BE.domain.transaction.service.TransactionService;
+import com.stopusing_BE.domain.transaction.util.CategoryEstimator;
 import com.stopusing_BE.domain.user.entity.User;
 import com.stopusing_BE.domain.user.service.UserService;
 import java.util.List;
@@ -23,11 +25,16 @@ public class TransactionUsecaseManager {
   private final UserService userService;
   private final TransactionService transactionService;
   private final TransactionCategoryService transactionCategoryService;
+  private final CategoryEstimator categoryEstimator;
 
   @Transactional
   public TransactionResponse create(TransactionCreateRequest request) {
     User user = userService.getByIdOrThrow(request.getUserId());
-    Transaction transaction = transactionService.create(user, request);
+    
+    // AI를 통한 카테고리 추정
+    TransactionCategory estimatedCategory = categoryEstimator.estimateCategory(request.getTitle());
+    
+    Transaction transaction = transactionService.create(user, request, estimatedCategory);
     return TransactionResponse.fromEntity(transaction);
   }
 
