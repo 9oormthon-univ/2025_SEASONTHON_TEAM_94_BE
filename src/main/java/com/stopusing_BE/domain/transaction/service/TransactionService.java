@@ -1,6 +1,7 @@
 package com.stopusing_BE.domain.transaction.service;
 
 
+import com.stopusing_BE.domain.transaction.dto.request.TransactionCreateByAlertRequest;
 import com.stopusing_BE.domain.transaction.dto.request.TransactionCreateRequest;
 import com.stopusing_BE.domain.transaction.dto.request.TransactionUpdateRequest;
 import com.stopusing_BE.domain.transaction.entity.Transaction;
@@ -24,12 +25,28 @@ public class TransactionService {
   private final TransactionRepository transactionRepository;
 
   @Transactional
-  public Transaction create(User user,
-      TransactionCreateRequest request, TransactionCategory category) {
+  public Transaction createByAlert(User user,
+      TransactionCreateByAlertRequest request, TransactionCategory category) {
 
     Transaction transaction = Transaction.builder()
         .type(TransactionType.NONE)
         .category(category)
+        .startedAt(request.getStartAt() != null ? request.getStartAt() : LocalDateTime.now())
+        .price(request.getPrice())
+        .title(request.getTitle())
+        .user(user)
+        .build();
+
+    return transactionRepository.save(transaction);
+  }
+
+  @Transactional
+  public Transaction create(User user,
+      TransactionCreateRequest request) {
+
+    Transaction transaction = Transaction.builder()
+        .type(TransactionType.NONE)
+        .category(request.getCategory() != null ? request.getCategory() : TransactionCategory.OTHER)
         .startedAt(request.getStartAt() != null ? request.getStartAt() : LocalDateTime.now())
         .price(request.getPrice())
         .title(request.getTitle())
@@ -47,7 +64,7 @@ public class TransactionService {
 
   @Transactional(readOnly = true)
   public List<Transaction> getAllByType(String userUid,TransactionType type) {
-    return transactionRepository.findAllByUser_UidAndType(userUid,type);
+    return transactionRepository.findByUser_UidAndTypeOrderByStartedAtDesc(userUid,type);
   }
 
   @Transactional
@@ -78,6 +95,26 @@ public class TransactionService {
     transactionRepository.delete(tx); // 영속 엔티티 삭제
     return tx;
   }
+
+  @Transactional(readOnly = true)
+  public List<Transaction> getByTypeAndDateRange(
+      String userUid, TransactionType type,
+      LocalDateTime start, LocalDateTime end
+  ) {
+    return transactionRepository.findByUser_UidAndTypeAndStartedAtGreaterThanEqualAndStartedAtLessThanOrderByStartedAtDesc(
+        userUid, type, start, end
+    );
+  }
+
+  @Transactional(readOnly = true)
+  public List<Transaction> getByTypeAndStartAtLessThan(String userUid, TransactionType type,
+      LocalDateTime endExclusive) {
+    return transactionRepository.findByUser_UidAndTypeAndStartedAtLessThanOrderByStartedAtDesc(
+        userUid, type, endExclusive
+    );
+  }
+
+
 
 
 

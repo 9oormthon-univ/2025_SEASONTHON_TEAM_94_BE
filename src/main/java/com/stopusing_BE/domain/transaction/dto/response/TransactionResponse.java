@@ -21,7 +21,7 @@ public class TransactionResponse {
   private TransactionCategory category;
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
-  private LocalDateTime startAt;
+  private LocalDateTime startedAt;
 
   // 엔티티 -> DTO 변환 메서드
   public static TransactionResponse fromEntity(Transaction transaction) {
@@ -34,7 +34,7 @@ public class TransactionResponse {
         .userUid(transaction.getUser().getUid())
         .createdAt(transaction.getCreatedAt())
         .updatedAt(transaction.getUpdatedAt())
-        .startAt(transaction.getStartedAt())
+        .startedAt(transaction.getStartedAt())
         .build();
   }
 }
