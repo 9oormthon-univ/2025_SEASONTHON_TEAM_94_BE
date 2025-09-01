@@ -24,14 +24,14 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
   public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
     CustomOAuth2UserResponse customUserDetails = (CustomOAuth2UserResponse) authentication.getPrincipal();
     String username = customUserDetails.getUserName();
-    Long userId = customUserDetails.getUserId();
+    String userUid = customUserDetails.getUserUid();
 
     Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
     Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
     GrantedAuthority auth = iterator.next();
     String role = auth.getAuthority();
 
-    String token = jwtUtils.createJwt(userId ,username, role, 60*60*60L);
+    String token = jwtUtils.createJwt(userUid ,username, role, 60*60*60L);
 
     response.addCookie(createCookie("Authorization", token));
     response.sendRedirect("http://localhost:3000/");

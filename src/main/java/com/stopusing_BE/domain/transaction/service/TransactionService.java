@@ -1,10 +1,10 @@
 package com.stopusing_BE.domain.transaction.service;
 
 
-import com.stopusing_BE.domain.category.entity.Category;
 import com.stopusing_BE.domain.transaction.dto.request.TransactionCreateRequest;
 import com.stopusing_BE.domain.transaction.dto.request.TransactionUpdateRequest;
 import com.stopusing_BE.domain.transaction.entity.Transaction;
+import com.stopusing_BE.domain.transaction.entity.TransactionCategory;
 import com.stopusing_BE.domain.transaction.entity.TransactionType;
 import com.stopusing_BE.domain.transaction.exception.TransactionErrorCode;
 import com.stopusing_BE.domain.transaction.repository.TransactionRepository;
@@ -25,18 +25,17 @@ public class TransactionService {
 
   @Transactional
   public Transaction create(User user,
-      List<Category> categories,
       TransactionCreateRequest request) {
 
     Transaction transaction = Transaction.builder()
         .type(TransactionType.NONE)
+        .category(TransactionCategory.BEAUTY)
         .startedAt(request.getStartAt() != null ? request.getStartAt() : LocalDateTime.now())
         .price(request.getPrice())
         .title(request.getTitle())
         .user(user)
         .build();
 
-    if (categories != null) categories.forEach(transaction::addCategory);
     return transactionRepository.save(transaction);
   }
 
@@ -47,35 +46,32 @@ public class TransactionService {
   }
 
   @Transactional(readOnly = true)
-  public List<Transaction> getAllByType(Long userId,TransactionType type) {
-    return transactionRepository.findAllByUser_IdAndType(userId,type);
+  public List<Transaction> getAllByType(String userUid,TransactionType type) {
+    return transactionRepository.findAllByUser_UidAndType(userUid,type);
   }
 
   @Transactional
-  public Transaction update(TransactionUpdateRequest request,Long userId,Long id,
-      List<Category> newCategories) {
+  public Transaction update(TransactionUpdateRequest request,String userUid,Long id) {
     Transaction tx = getByIdOrThrow(id);
     // 소유자 검사
-    if (!Objects.equals(tx.getUser().getId(), userId)) {
+    if (!Objects.equals(tx.getUser().getUid(), userUid)) {
       throw new CustomException(ErrorCode.FORBIDDEN, "본인의 거래만 변경할 수 있습니다.");
     }
     if (request.getPrice() != null)     tx.setPrice(request.getPrice());
     if (request.getTitle() != null)     tx.setTitle(request.getTitle());
     if (request.getType() != null)      tx.setType(request.getType());
     if (request.getStartAt() != null) tx.setStartedAt(request.getStartAt());
-    if (request.getCategoryIds() != null) {      // null: 유지, 빈 리스트: 모두 해제
-      tx.replaceCategories(newCategories);   // 조인만 갈아끼움, Category는 삭제 안됨
-    }
+    if (request.getCategory() != null)  tx.setCategory(request.getCategory());
 
     return tx; // 변경감지
   }
 
   @Transactional
-  public Transaction deleteById(Long id, Long userId) {
+  public Transaction deleteById(Long id, String userId) {
     Transaction tx = getByIdOrThrow(id);
 
     // 소유자 검사
-    if (!Objects.equals(tx.getUser().getId(), userId)) {
+    if (!Objects.equals(tx.getUser().getUid(), userId)) {
       throw new CustomException(ErrorCode.FORBIDDEN, "본인의 거래만 삭제할 수 있습니다.");
     }
 

@@ -30,7 +30,7 @@ public class CustomOAuth2UserResponse implements OAuth2User {
     return userResponse.getNickname();
   }
 
-  public Long getUserId() {
+  public String getUserUid() {
     return userResponse.getId();
   }
 
