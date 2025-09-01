@@ -4,6 +4,6 @@ spring:
   profiles:
     include:
       - mysql
-      - swagger
+#      - swagger
       - jwt
       - oauth
