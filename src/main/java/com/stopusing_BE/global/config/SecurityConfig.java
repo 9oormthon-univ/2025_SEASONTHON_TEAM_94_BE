@@ -5,6 +5,7 @@ import com.stopusing_BE.global.jwt.JWTUtils;
 import com.stopusing_BE.global.oauth.CustomSuccessHandler;
 import com.stopusing_BE.global.oauth.service.CustomOAuth2UserService;
 import java.util.Arrays;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,14 +39,22 @@ public class SecurityConfig {
   // CORS 설정
   @Bean
   CorsConfigurationSource corsConfigurationSource() {
-    CorsConfiguration configuration = new CorsConfiguration();
-    configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000","http://localhost:5173"));
-    configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","OPTIONS"));
-    configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With", "Accept", "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers"));
-    configuration.setAllowCredentials(true);
-    configuration.setMaxAge(3600L);
+    CorsConfiguration cfg = new CorsConfiguration();
+    cfg.setAllowCredentials(true);
+    // 정확 매칭
+    cfg.setAllowedOrigins(List.of("http://localhost:3000","http://localhost:5173"));
+    // 또는 패턴 허용(선택) — 127.0.0.1, 포트 변경 대비
+    cfg.setAllowedOriginPatterns(List.of("http://localhost:*","http://127.0.0.1:*"));
+
+    // 개발 중에는 전체 허용이 덜 헷갈립니다
+    cfg.addAllowedHeader("*");
+    cfg.addAllowedMethod("*"); // GET, POST, PUT, PATCH, DELETE, OPTIONS 모두
+    cfg.setExposedHeaders(List.of("Authorization","Location")); // 필요한 경우
+
+    cfg.setMaxAge(3600L);
+
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-    source.registerCorsConfiguration("/**", configuration);
+    source.registerCorsConfiguration("/**", cfg);
     return source;
   }
 
