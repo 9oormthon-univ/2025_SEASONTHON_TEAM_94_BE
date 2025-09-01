@@ -1,7 +1,5 @@
 package com.stopusing_BE.domain.transaction.manager;
 
-import com.stopusing_BE.domain.category.entity.Category;
-import com.stopusing_BE.domain.category.service.CategoryService;
 import com.stopusing_BE.domain.transaction.dto.request.TransactionCreateRequest;
 import com.stopusing_BE.domain.transaction.dto.request.TransactionUpdateRequest;
 import com.stopusing_BE.domain.transaction.dto.response.TransactionCategoryResponse;
@@ -23,14 +21,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class TransactionUsecaseManager {
 
   private final UserService userService;
-  private final CategoryService categoryService;
   private final TransactionService transactionService;
   private final TransactionCategoryService transactionCategoryService;
 
   @Transactional
   public TransactionResponse create(TransactionCreateRequest request) {
     User user = userService.getByIdOrThrow(request.getUserId());
-//    List<Category> categories = categoryService.getAllByIdsOrThrow(request.getCategoryIds());
     Transaction transaction = transactionService.create(user, request);
     return TransactionResponse.fromEntity(transaction);
   }

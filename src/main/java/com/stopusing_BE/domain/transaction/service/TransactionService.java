@@ -67,11 +67,11 @@ public class TransactionService {
   }
 
   @Transactional
-  public Transaction deleteById(Long id, String userId) {
+  public Transaction deleteById(Long id, String userUid) {
     Transaction tx = getByIdOrThrow(id);
 
     // 소유자 검사
-    if (!Objects.equals(tx.getUser().getUid(), userId)) {
+    if (!Objects.equals(tx.getUser().getUid(), userUid)) {
       throw new CustomException(ErrorCode.FORBIDDEN, "본인의 거래만 삭제할 수 있습니다.");
     }
 
