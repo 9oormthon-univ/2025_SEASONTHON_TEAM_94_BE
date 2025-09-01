@@ -1,11 +1,9 @@
 package com.stopusing_BE.domain.transaction.dto.response;
 
-import com.stopusing_BE.domain.category.entity.Category;
 import com.stopusing_BE.domain.transaction.entity.Transaction;
+import com.stopusing_BE.domain.transaction.entity.TransactionCategory;
 import com.stopusing_BE.domain.transaction.entity.TransactionType;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,8 +17,8 @@ public class TransactionResponse {
   private Long price;
   private String title;
   private TransactionType type;
-  private Long userId;
-  private List<Long> categoryIds;
+  private String userUid;
+  private TransactionCategory category;
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
   private LocalDateTime startAt;
@@ -32,11 +30,8 @@ public class TransactionResponse {
         .price(transaction.getPrice())
         .title(transaction.getTitle())
         .type(transaction.getType())
-        .userId(transaction.getUser().getId())
-        .categoryIds(transaction.getCategories()
-            .stream()
-            .map(Category::getId)
-            .collect(Collectors.toList()))
+        .category(transaction.getCategory())
+        .userUid(transaction.getUser().getUid())
         .createdAt(transaction.getCreatedAt())
         .updatedAt(transaction.getUpdatedAt())
         .startAt(transaction.getStartedAt())

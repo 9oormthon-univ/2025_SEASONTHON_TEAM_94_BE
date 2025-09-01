@@ -2,6 +2,7 @@ package com.stopusing_BE.domain.transaction.controller;
 
 import com.stopusing_BE.domain.transaction.dto.request.TransactionCreateRequest;
 import com.stopusing_BE.domain.transaction.dto.request.TransactionUpdateRequest;
+import com.stopusing_BE.domain.transaction.dto.response.TransactionCategoryResponse;
 import com.stopusing_BE.domain.transaction.dto.response.TransactionResponse;
 import com.stopusing_BE.domain.transaction.entity.TransactionType;
 import com.stopusing_BE.domain.transaction.manager.TransactionUsecaseManager;
@@ -32,25 +33,25 @@ public class TransactionController implements TransactionSpec {
 
   @Override
   @GetMapping
-  public ApiResponse<List<TransactionResponse>> getAllByType(Long userId,TransactionType type) {
-    List<TransactionResponse> transactionResponse = transactionManager.getAllByType(userId,type);
+  public ApiResponse<List<TransactionResponse>> getAllByType(String userUid,TransactionType type) {
+    List<TransactionResponse> transactionResponse = transactionManager.getAllByType(userUid,type);
     return ApiResponse.success(transactionResponse);
   }
 
   @Override
   @GetMapping("/{id}")
-  public ApiResponse<TransactionResponse> getById(Long userId, Long id) {
-    TransactionResponse transactionResponse = transactionManager.getById(userId,id);
+  public ApiResponse<TransactionResponse> getById(String userUid, Long id) {
+    TransactionResponse transactionResponse = transactionManager.getById(userUid,id);
     return ApiResponse.success(transactionResponse);
   }
 
   @Override
   @GetMapping("total-price")
   public ApiResponse<Long> getTotalPriceByType(
-      Long userId,
+      String userUid,
       TransactionType type
   ) {
-    Long totalPrice = transactionManager.getTotalPriceByType(userId,type);
+    Long totalPrice = transactionManager.getTotalPriceByType(userUid,type);
     return ApiResponse.success(totalPrice);
   }
 
@@ -58,18 +59,25 @@ public class TransactionController implements TransactionSpec {
   @PutMapping("/{id}")
   public ApiResponse<TransactionResponse> update(
       TransactionUpdateRequest request
-      ,Long userId,Long id) {
+      ,String userUid,Long id) {
     TransactionResponse transactionResponse = transactionManager.update(
-        request, userId, id
+        request, userUid, id
     );
     return ApiResponse.success(transactionResponse);
   }
 
   @Override
   @DeleteMapping("/{id}")
-  public ApiResponse<TransactionResponse> delete(Long userId,Long id) {
-    TransactionResponse deleted = transactionManager.delete(userId, id);
+  public ApiResponse<TransactionResponse> delete(String userUid,Long id) {
+    TransactionResponse deleted = transactionManager.delete(userUid, id);
     return ApiResponse.success(deleted);
+  }
+
+  @Override
+  @GetMapping("/categories")
+  public ApiResponse<List<TransactionCategoryResponse>> getAllCategories() {
+    List<TransactionCategoryResponse> response = transactionManager.getAllCategories();
+    return ApiResponse.success(response);
   }
 
 

@@ -33,8 +33,8 @@ public class Category extends BaseEntity {
   @Column(nullable = false)
   private String name;
 
-  @Builder.Default
-  @ManyToMany(mappedBy = "categories")
-  private Set<Transaction> transactions = new HashSet<>();
+//  @Builder.Default
+//  @ManyToMany(mappedBy = "categories")
+//  private Set<Transaction> transactions = new HashSet<>();
 
 }

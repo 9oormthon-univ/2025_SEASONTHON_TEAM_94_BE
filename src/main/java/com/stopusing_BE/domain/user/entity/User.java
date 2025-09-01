@@ -1,12 +1,11 @@
 package com.stopusing_BE.domain.user.entity;
 
-//import com.stopusing_BE.domain.transaction.entity.Transaction;
+import com.github.f4b6a3.ulid.UlidCreator;
 import com.stopusing_BE.domain.transaction.entity.Transaction;
 import com.stopusing_BE.global.common.base.BaseEntity;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
@@ -27,8 +26,9 @@ import lombok.Setter;
 public class User extends BaseEntity {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  @Column(name = "uid", nullable = false, length = 26, unique = true)
+  @Builder.Default
+  private String uid = UlidCreator.getUlid().toString();
   private String username;
   private String nickname;
   private String role;
@@ -36,11 +36,6 @@ public class User extends BaseEntity {
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
   @Builder.Default
   private List<Transaction> transactions = new ArrayList<>();
-
-  public void addTransaction(Transaction transaction) {
-    transactions.add(transaction);
-    transaction.setUser(this);
-  }
 
 }
 

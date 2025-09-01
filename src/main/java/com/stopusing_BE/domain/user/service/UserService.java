@@ -14,8 +14,8 @@ public class UserService {
   private final UserRepository userRepository;
 
   @Transactional(readOnly = true)
-  public User getByIdOrThrow(Long userId) {
-    return userRepository.findById(userId)
+  public User getByIdOrThrow(String userUid) {
+    return userRepository.findByUid(userUid)
         .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
   }
 }
