@@ -1,4 +1,4 @@
-FROM openjdk:17-jdk-slim
+FROM --platform=linux/arm64 openjdk:21-jdk-slim
 
 VOLUME /app
 

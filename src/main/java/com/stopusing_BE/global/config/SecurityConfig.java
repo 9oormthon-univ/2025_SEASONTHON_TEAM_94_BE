@@ -43,9 +43,9 @@ public class SecurityConfig {
     CorsConfiguration cfg = new CorsConfiguration();
     cfg.setAllowCredentials(true);
     // 정확 매칭
-    cfg.setAllowedOrigins(List.of("http://localhost:3000","http://localhost:5173"));
+    cfg.setAllowedOrigins(List.of("http://localhost:3000","http://localhost:5173","https://stopusing.klr.kr"));
     // 또는 패턴 허용(선택) — 127.0.0.1, 포트 변경 대비
-    cfg.setAllowedOriginPatterns(List.of("http://localhost:*","http://127.0.0.1:*"));
+    cfg.setAllowedOriginPatterns(List.of("http://localhost:*","http://127.0.0.1:*","https://stopusing.klr.kr"));
 
     // 개발 중에는 전체 허용이 덜 헷갈립니다
     cfg.addAllowedHeader("*");
