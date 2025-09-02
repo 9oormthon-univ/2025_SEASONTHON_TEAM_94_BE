@@ -1,27 +1,43 @@
 package com.stopusing_BE.domain.transaction.spec;
 
+import com.stopusing_BE.domain.transaction.dto.request.TransactionCreateByAlertRequest;
 import com.stopusing_BE.domain.transaction.dto.request.TransactionCreateRequest;
 import com.stopusing_BE.domain.transaction.dto.request.TransactionUpdateRequest;
 import com.stopusing_BE.domain.transaction.dto.response.TransactionCategoryResponse;
+import com.stopusing_BE.domain.transaction.dto.response.TransactionReportResponse;
 import com.stopusing_BE.domain.transaction.dto.response.TransactionResponse;
 import com.stopusing_BE.domain.transaction.entity.TransactionType;
 import com.stopusing_BE.global.common.exception.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
+import java.time.LocalDate;
 import java.util.List;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 public interface TransactionSpec {
-  @Operation(summary = "지출 내역 생성", description = "지출 내역을 생성합니다.")
-  ApiResponse<TransactionResponse> create(
-      @RequestBody TransactionCreateRequest request
+  @Operation(summary = "알림 내역으로 지출 내역 생성", description = "알림 내역으로 지출 내역을 생성합니다.")
+  ApiResponse<TransactionResponse> createByAlert(
+      @RequestBody @Validated TransactionCreateByAlertRequest request
   );
 
+  @Operation(summary = "지출 내역 생성", description = "지출 내역을 생성합니다.")
+  ApiResponse<TransactionResponse> create(
+      @RequestBody @Validated TransactionCreateRequest request
+  );
+
+
+
   @Operation(summary = "지출 내역 조회", description = "지출 내역을 type 별로 조회합니다.")
-  ApiResponse<List<TransactionResponse>> getAllByType(
+  ApiResponse<List<TransactionResponse>> getAllByTypeAndDateRange(
       @RequestParam() String userUid,
-      @RequestParam(required = false) TransactionType type
+      @RequestParam() TransactionType type,
+      @RequestParam(required = false) @DateTimeFormat(pattern="yyyy-MM-dd") LocalDate startAt,
+      @RequestParam(required = false) @DateTimeFormat(pattern="yyyy-MM-dd") LocalDate endAt
+
   );
 
   @Operation(summary = "지출 내역 상세 조회", description = "지출 내역 상세 정보를 조회합니다.")
@@ -30,10 +46,13 @@ public interface TransactionSpec {
       @PathVariable Long id
   );
 
-  @Operation(summary = "타입별 지출 총 금액 조회", description = "타입별 지출 총 금액 조회합니다.")
-  ApiResponse<Long> getTotalPriceByType(
+  @Operation(summary = "지출 분석을 위한 조회", description = "지출 분석을 위한 조회합니다.")
+  ApiResponse<TransactionReportResponse> getAllForReportByType(
       @RequestParam String userUid,
-      @RequestParam TransactionType type
+      @RequestParam TransactionType type,
+      @RequestParam(required = false) @DateTimeFormat(pattern="yyyy-MM-dd") LocalDate startAt,
+      @RequestParam(required = false) @DateTimeFormat(pattern="yyyy-MM-dd") LocalDate endAt
+
   );
 
   @Operation(summary = "지출 내역 수정", description = "지출 내역을 수정합니다.")

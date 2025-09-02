@@ -1,13 +1,16 @@
 package com.stopusing_BE.domain.transaction.controller;
 
+import com.stopusing_BE.domain.transaction.dto.request.TransactionCreateByAlertRequest;
 import com.stopusing_BE.domain.transaction.dto.request.TransactionCreateRequest;
 import com.stopusing_BE.domain.transaction.dto.request.TransactionUpdateRequest;
 import com.stopusing_BE.domain.transaction.dto.response.TransactionCategoryResponse;
+import com.stopusing_BE.domain.transaction.dto.response.TransactionReportResponse;
 import com.stopusing_BE.domain.transaction.dto.response.TransactionResponse;
 import com.stopusing_BE.domain.transaction.entity.TransactionType;
 import com.stopusing_BE.domain.transaction.manager.TransactionUsecaseManager;
 import com.stopusing_BE.domain.transaction.spec.TransactionSpec;
 import com.stopusing_BE.global.common.exception.response.ApiResponse;
+import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,16 +28,24 @@ public class TransactionController implements TransactionSpec {
   private final TransactionUsecaseManager transactionManager;
 
   @Override
-  @PostMapping
-  public ApiResponse<TransactionResponse> create(TransactionCreateRequest request) {
-        TransactionResponse transactionResponse = transactionManager.create(request);
+  @PostMapping("/alarm")
+  public ApiResponse<TransactionResponse> createByAlert(TransactionCreateByAlertRequest request) {
+        TransactionResponse transactionResponse = transactionManager.createByAlert(request);
         return ApiResponse.success(transactionResponse);
   }
 
   @Override
+  @PostMapping
+  public ApiResponse<TransactionResponse> create(TransactionCreateRequest request) {
+    TransactionResponse transactionResponse = transactionManager.create(request);
+    return ApiResponse.success(transactionResponse);
+  }
+
+
+  @Override
   @GetMapping
-  public ApiResponse<List<TransactionResponse>> getAllByType(String userUid,TransactionType type) {
-    List<TransactionResponse> transactionResponse = transactionManager.getAllByType(userUid,type);
+  public ApiResponse<List<TransactionResponse>> getAllByTypeAndDateRange(String userUid,TransactionType type, LocalDate startAt, LocalDate endAt) {
+    List<TransactionResponse> transactionResponse = transactionManager.getAllByTypeAndRange(userUid,type, startAt, endAt);
     return ApiResponse.success(transactionResponse);
   }
 
@@ -46,13 +57,16 @@ public class TransactionController implements TransactionSpec {
   }
 
   @Override
-  @GetMapping("total-price")
-  public ApiResponse<Long> getTotalPriceByType(
+  @GetMapping("/report")
+  public ApiResponse<TransactionReportResponse> getAllForReportByType(
       String userUid,
-      TransactionType type
+      TransactionType type,
+      LocalDate startAt,
+      LocalDate endAt
   ) {
-    Long totalPrice = transactionManager.getTotalPriceByType(userUid,type);
-    return ApiResponse.success(totalPrice);
+    List<TransactionResponse> list = transactionManager.getAllByTypeAndRange(userUid, type, startAt, endAt);
+    TransactionReportResponse transactionReportResponse = transactionManager.buildReport(list);
+    return ApiResponse.success(transactionReportResponse);
   }
 
   @Override
