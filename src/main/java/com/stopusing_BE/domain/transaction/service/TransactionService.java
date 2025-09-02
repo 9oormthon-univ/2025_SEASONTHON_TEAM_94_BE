@@ -45,7 +45,7 @@ public class TransactionService {
       TransactionCreateRequest request) {
 
     Transaction transaction = Transaction.builder()
-        .type(TransactionType.NONE)
+        .type(request.getType() != null ? request.getType() : TransactionType.NONE)
         .category(request.getCategory() != null ? request.getCategory() : TransactionCategory.OTHER)
         .startedAt(request.getStartAt() != null ? request.getStartAt() : LocalDateTime.now())
         .price(request.getPrice())

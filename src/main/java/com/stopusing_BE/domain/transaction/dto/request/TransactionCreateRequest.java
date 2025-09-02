@@ -1,6 +1,7 @@
 package com.stopusing_BE.domain.transaction.dto.request;
 
 import com.stopusing_BE.domain.transaction.entity.TransactionCategory;
+import com.stopusing_BE.domain.transaction.entity.TransactionType;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -24,6 +25,8 @@ public class TransactionCreateRequest {
 
   @NotNull(message = "사용자 ID는 필수 입력 값입니다.")
   private String userUid;
+
+  private TransactionType type;
 
   private TransactionCategory category;
 
