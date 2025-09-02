@@ -43,6 +43,12 @@ public class Transaction extends BaseEntity {
   @Column(nullable = false)
   private String title;
 
+  @Column(name="bank_name",nullable = false)
+  private String bankName;
+
+  @Column(nullable = true)
+  private String memo;
+
   @Column(nullable = false)
   @Enumerated(EnumType.STRING)
   private TransactionCategory category;
