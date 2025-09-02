@@ -10,6 +10,7 @@ import com.stopusing_BE.domain.transaction.entity.TransactionType;
 import com.stopusing_BE.domain.transaction.manager.TransactionUsecaseManager;
 import com.stopusing_BE.domain.transaction.spec.TransactionSpec;
 import com.stopusing_BE.global.common.exception.response.ApiResponse;
+import com.stopusing_BE.global.oauth.dto.response.CustomOAuth2UserResponse;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -36,22 +37,28 @@ public class TransactionController implements TransactionSpec {
 
   @Override
   @PostMapping
-  public ApiResponse<TransactionResponse> create(TransactionCreateRequest request) {
-    TransactionResponse transactionResponse = transactionManager.create(request);
+  public ApiResponse<TransactionResponse> create(CustomOAuth2UserResponse currentUser,TransactionCreateRequest request) {
+    String userUid = currentUser.getUserUid();
+    TransactionResponse transactionResponse = transactionManager.create(userUid,request);
     return ApiResponse.success(transactionResponse);
   }
 
 
   @Override
   @GetMapping
-  public ApiResponse<List<TransactionResponse>> getAllByTypeAndDateRange(String userUid,TransactionType type, LocalDate startAt, LocalDate endAt) {
+  public ApiResponse<List<TransactionResponse>> getAllByTypeAndDateRange(
+      CustomOAuth2UserResponse currentUser,TransactionType type, LocalDate startAt, LocalDate endAt) {
+    String userUid = currentUser.getUserUid();
     List<TransactionResponse> transactionResponse = transactionManager.getAllByTypeAndRange(userUid,type, startAt, endAt);
     return ApiResponse.success(transactionResponse);
   }
 
   @Override
   @GetMapping("/{id}")
-  public ApiResponse<TransactionResponse> getById(String userUid, Long id) {
+  public ApiResponse<TransactionResponse> getById(
+      CustomOAuth2UserResponse currentUser
+      , Long id) {
+    String userUid = currentUser.getUserUid();
     TransactionResponse transactionResponse = transactionManager.getById(userUid,id);
     return ApiResponse.success(transactionResponse);
   }
@@ -59,11 +66,12 @@ public class TransactionController implements TransactionSpec {
   @Override
   @GetMapping("/report")
   public ApiResponse<TransactionReportResponse> getAllForReportByType(
-      String userUid,
+      CustomOAuth2UserResponse currentUser,
       TransactionType type,
       LocalDate startAt,
       LocalDate endAt
   ) {
+    String userUid = currentUser.getUserUid();
     List<TransactionResponse> list = transactionManager.getAllByTypeAndRange(userUid, type, startAt, endAt);
     TransactionReportResponse transactionReportResponse = transactionManager.buildReport(list);
     return ApiResponse.success(transactionReportResponse);
@@ -73,7 +81,8 @@ public class TransactionController implements TransactionSpec {
   @PutMapping("/{id}")
   public ApiResponse<TransactionResponse> update(
       TransactionUpdateRequest request
-      ,String userUid,Long id) {
+      ,CustomOAuth2UserResponse currentUser,Long id) {
+    String userUid = currentUser.getUserUid();
     TransactionResponse transactionResponse = transactionManager.update(
         request, userUid, id
     );
@@ -82,7 +91,8 @@ public class TransactionController implements TransactionSpec {
 
   @Override
   @DeleteMapping("/{id}")
-  public ApiResponse<TransactionResponse> delete(String userUid,Long id) {
+  public ApiResponse<TransactionResponse> delete(CustomOAuth2UserResponse currentUser,Long id) {
+    String userUid = currentUser.getUserUid();
     TransactionResponse deleted = transactionManager.delete(userUid, id);
     return ApiResponse.success(deleted);
   }

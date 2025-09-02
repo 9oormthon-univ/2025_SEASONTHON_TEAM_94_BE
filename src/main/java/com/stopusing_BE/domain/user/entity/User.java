@@ -32,6 +32,7 @@ public class User extends BaseEntity {
   private String uid = UlidCreator.getUlid().toString();
   private String username;
   private String nickname;
+  private String email;
   private String role;
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)

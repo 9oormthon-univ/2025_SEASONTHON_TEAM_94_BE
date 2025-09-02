@@ -44,8 +44,8 @@ public class TransactionUsecaseManager {
   }
 
   @Transactional
-  public TransactionResponse create(TransactionCreateRequest request) {
-    User user = userService.getByIdOrThrow(request.getUserUid());
+  public TransactionResponse create(String userUid,TransactionCreateRequest request) {
+    User user = userService.getByIdOrThrow(userUid);
     Transaction transaction = transactionService.create(user, request);
     return TransactionResponse.fromEntity(transaction);
   }

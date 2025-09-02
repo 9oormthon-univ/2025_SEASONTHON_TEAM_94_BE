@@ -20,8 +20,8 @@ public class BudgetGoalManager {
 
     /** 생성 */
     @Transactional
-    public BudgetGoalResponse create(BudgetGoalCreateRequest request) {
-      User user = userService.getByIdOrThrow(request.getUserUid());
+    public BudgetGoalResponse create(String userUid ,BudgetGoalCreateRequest request) {
+      User user = userService.getByIdOrThrow(userUid);
       BudgetGoal budgetGoal = budgetGoalService.create(user, request);
       return BudgetGoalResponse.fromEntity(budgetGoal);
     }
