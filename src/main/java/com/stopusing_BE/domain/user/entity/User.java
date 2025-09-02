@@ -1,6 +1,7 @@
 package com.stopusing_BE.domain.user.entity;
 
 import com.github.f4b6a3.ulid.UlidCreator;
+import com.stopusing_BE.domain.budgetgoal.entity.BudgetGoal;
 import com.stopusing_BE.domain.transaction.entity.Transaction;
 import com.stopusing_BE.global.common.base.BaseEntity;
 import jakarta.persistence.CascadeType;
@@ -36,6 +37,10 @@ public class User extends BaseEntity {
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
   @Builder.Default
   private List<Transaction> transactions = new ArrayList<>();
+
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+  @Builder.Default
+  private List<BudgetGoal> budgetGoals = new ArrayList<>();
 
 }
 
