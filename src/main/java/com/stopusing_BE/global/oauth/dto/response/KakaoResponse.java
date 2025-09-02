@@ -5,10 +5,13 @@ import java.util.Map;
 public class KakaoResponse implements OAuth2Response {
   private final Map<String, Object> attribute;
   private final Map<String, Object> properties;
+  private final Map<String, Object> kakaoAccount;
 
   public KakaoResponse(Map<String, Object> attribute) {
+    System.out.println("attribute" + attribute);
     this.attribute = attribute;
     this.properties = (Map<String, Object>) attribute.get("properties");
+    this.kakaoAccount = (Map<String, Object>) attribute.get("kakao_account");
   }
 
   @Override
@@ -26,5 +29,10 @@ public class KakaoResponse implements OAuth2Response {
     return properties.get("nickname").toString();
   }
 
-
+  @Override
+  public String getEmail() {
+    return kakaoAccount != null && kakaoAccount.get("email") != null
+        ? kakaoAccount.get("email").toString()
+        : null;
+  }
 }
