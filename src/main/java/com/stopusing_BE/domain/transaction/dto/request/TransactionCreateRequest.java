@@ -23,9 +23,6 @@ public class TransactionCreateRequest {
   @NotBlank(message = "거래 제목은 필수 입력 값입니다.")
   private String title;
 
-  @NotNull(message = "사용자 ID는 필수 입력 값입니다.")
-  private String userUid;
-
   private TransactionType type;
 
   private TransactionCategory category;

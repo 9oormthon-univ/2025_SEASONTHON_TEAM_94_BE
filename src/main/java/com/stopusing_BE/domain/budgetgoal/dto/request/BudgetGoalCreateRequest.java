@@ -11,8 +11,4 @@ import lombok.Setter;
 public class BudgetGoalCreateRequest {
   @NotNull(message = "가격을 입력해주세요")
   private Long price;
-
-  @NotNull(message = "사용자 ID는 필수 입력 값입니다.")
-  private String userUid;
-
 }
