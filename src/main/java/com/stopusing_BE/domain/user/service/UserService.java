@@ -36,6 +36,12 @@ public class UserService {
 
   }
 
+  @Transactional
+  public UserResponse getMe(String userUid) {
+    User user = getByIdOrThrow(userUid);
+    return UserResponse.fromEntity(user);
+  }
+
 
 
 
