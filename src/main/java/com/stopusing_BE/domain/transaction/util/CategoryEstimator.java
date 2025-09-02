@@ -29,7 +29,7 @@ public class CategoryEstimator {
 
     /**
      * 거래 제목을 기반으로 TransactionCategory를 추정합니다.
-     * 
+     *
      * @param title 거래 제목
      * @return 추정된 TransactionCategory, 추정 실패 시 OTHER 반환
      */
@@ -57,12 +57,12 @@ public class CategoryEstimator {
 
         return String.format("""
                 다음 거래 제목을 분석하여 가장 적절한 카테고리를 추정해주세요.
-                
+
                 거래 제목: "%s"
-                
+
                 사용 가능한 카테고리:
                 %s
-                
+
                 응답 형식: 카테고리 이름만 반환 (예: FOOD)
                 한국어 거래 제목을 분석하여 가장 적절한 카테고리를 선택하세요.
                 """, title, categories.toString());
@@ -108,14 +108,14 @@ public class CategoryEstimator {
         try {
             // 응답에서 카테고리 이름만 추출
             String categoryName = response.toUpperCase().trim();
-            
+
             // 유효한 카테고리인지 확인
             for (TransactionCategory category : TransactionCategory.values()) {
                 if (category.name().equals(categoryName)) {
                     return category;
                 }
             }
-            
+
             log.warn("알 수 없는 카테고리 응답: {}", response);
             return TransactionCategory.OTHER;
         } catch (Exception e) {
