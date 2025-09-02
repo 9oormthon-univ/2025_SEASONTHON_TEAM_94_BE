@@ -39,3 +39,7 @@ out/
 
 # application.yml
 application-**.yml
+
+# claude
+.claude
+CLAUDE.local.md
