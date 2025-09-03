@@ -43,6 +43,16 @@ public class Transaction extends BaseEntity {
   @Column(nullable = false)
   private String title;
 
+  @Column(name="bank_name",nullable = false)
+  private String bankName;
+
+  @Column(nullable = true)
+  private String memo;
+
+  // 더치페이 명수를 위한 필드 추가
+  @Column(name = "split_count", nullable = false)
+  private Integer splitCount;
+
   @Column(nullable = false)
   @Enumerated(EnumType.STRING)
   private TransactionCategory category;

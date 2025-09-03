@@ -16,6 +16,9 @@ public class TransactionResponse {
   private Long id;
   private Long price;
   private String title;
+  private String bankName;
+  private String memo;
+  private Integer splitCount;
   private TransactionType type;
   private String userUid;
   private TransactionCategory category;
@@ -29,6 +32,9 @@ public class TransactionResponse {
         .id(transaction.getId())
         .price(transaction.getPrice())
         .title(transaction.getTitle())
+        .bankName(transaction.getBankName())
+        .memo(transaction.getMemo())
+        .splitCount(transaction.getSplitCount())
         .type(transaction.getType())
         .category(transaction.getCategory())
         .userUid(transaction.getUser().getUid())

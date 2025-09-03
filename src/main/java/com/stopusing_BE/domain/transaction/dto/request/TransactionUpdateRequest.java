@@ -26,6 +26,14 @@ public class TransactionUpdateRequest {
   @NotBlank(message = "거래 제목은 필수 입력 값입니다.")
   private String title;
 
+  @NotBlank(message = "은행명을 입력하세요")
+  private String bankName;
+
+  @NotBlank(message = "더치페이 명수를 입력해주세요")
+  private Integer splitCount;
+
+  private String memo;
+
   private TransactionCategory category;
 
 }

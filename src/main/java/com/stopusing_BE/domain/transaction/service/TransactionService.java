@@ -31,8 +31,11 @@ public class TransactionService {
     Transaction transaction = Transaction.builder()
         .type(TransactionType.NONE)
         .category(category)
+        .memo(request.getMemo())
+        .bankName(request.getBankName())
         .startedAt(request.getStartAt() != null ? request.getStartAt() : LocalDateTime.now())
         .price(request.getPrice())
+        .splitCount(1)
         .title(request.getTitle())
         .user(user)
         .build();
@@ -50,6 +53,8 @@ public class TransactionService {
         .startedAt(request.getStartAt() != null ? request.getStartAt() : LocalDateTime.now())
         .price(request.getPrice())
         .title(request.getTitle())
+        .splitCount(request.getSplitCount() != null ? request.getSplitCount() : 1)
+        .bankName(request.getBankName())
         .user(user)
         .build();
 
@@ -76,9 +81,12 @@ public class TransactionService {
     }
     if (request.getPrice() != null)     tx.setPrice(request.getPrice());
     if (request.getTitle() != null)     tx.setTitle(request.getTitle());
+    if (request.getMemo() != null)     tx.setMemo(request.getMemo());
+    if (request.getBankName() != null)     tx.setBankName(request.getBankName());
     if (request.getType() != null)      tx.setType(request.getType());
     if (request.getStartAt() != null) tx.setStartedAt(request.getStartAt());
     if (request.getCategory() != null)  tx.setCategory(request.getCategory());
+    if (request.getSplitCount() != null)  tx.setSplitCount(request.getSplitCount());
 
     return tx; // 변경감지
   }
