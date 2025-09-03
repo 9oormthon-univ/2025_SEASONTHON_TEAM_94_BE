@@ -11,6 +11,7 @@ public class UserResponse {
   private String role;
   private String username;
   private String nickname;
+  private String email;
 
   public static UserResponse fromEntity(User user) {
     return UserResponse.builder()
@@ -18,6 +19,7 @@ public class UserResponse {
         .role(user.getRole())
         .username(user.getUsername())
         .nickname(user.getNickname())
+        .email(user.getEmail())
         .build();
   }
 

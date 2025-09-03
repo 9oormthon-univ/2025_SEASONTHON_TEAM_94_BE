@@ -7,5 +7,7 @@ public interface OAuth2Response {
 
   String getNickname();
 
+  String getEmail();
+
 //  String getImage();
 }
