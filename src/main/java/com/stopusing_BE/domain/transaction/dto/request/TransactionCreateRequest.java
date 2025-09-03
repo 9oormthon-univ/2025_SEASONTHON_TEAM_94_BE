@@ -23,8 +23,6 @@ public class TransactionCreateRequest {
   @NotBlank(message = "거래 제목은 필수 입력 값입니다.")
   private String title;
 
-  @NotNull(message = "사용자 ID는 필수 입력 값입니다.")
-  private String userUid;
 
   @NotBlank(message = "은행명을 입력하세요")
   private String bankName;
