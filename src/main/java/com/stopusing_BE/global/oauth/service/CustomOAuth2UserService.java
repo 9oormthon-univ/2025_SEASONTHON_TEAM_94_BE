@@ -31,13 +31,12 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     String username = oAuth2Response.getProvider()+"_"+oAuth2Response.getProviderId();
     String email =oAuth2Response.getEmail();
 
-
     Optional<User> accountOpt = userRepository.findUserByUsername(username);
 
     if (accountOpt.isEmpty()) {
       User user = User.builder()
           .username(username)
-          .nickname("new")
+          .nickname(oAuth2Response.getNickname() == null ? "유저" : oAuth2Response.getNickname())
           .email(email)
           .role("ROLE_USER")
           .build();
