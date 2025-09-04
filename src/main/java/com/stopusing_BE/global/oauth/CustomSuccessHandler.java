@@ -48,7 +48,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
   public ResponseCookie createCookie(String key, String value, boolean isLocal) {
     return ResponseCookie.from(key, value)
         .httpOnly(false)
-        .secure(!isLocal)                // 로컬이면 secure 비활성화
+        .secure(true)
         .sameSite(isLocal ? "None" : "Lax")
         .maxAge(60 * 60 * 60 * 10)
         .path("/")
