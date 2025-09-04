@@ -2,7 +2,9 @@ package com.stopusing_BE.domain.transaction.entity;
 
 import com.stopusing_BE.domain.user.entity.User;
 import com.stopusing_BE.global.common.base.BaseEntity;
+import com.stopusing_BE.global.common.converter.EncryptConverter;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -37,19 +39,21 @@ public class Transaction extends BaseEntity {
   @Column(name = "started_at", columnDefinition = "TIMESTAMP(6)", nullable = false)
   private LocalDateTime startedAt;
 
-  //암호화
   @Column(nullable = false)
   private Long price;
 
   // 암호화
+  @Convert(converter = EncryptConverter.class)
   @Column(nullable = false)
   private String title;
 
   // 암호화
+  @Convert(converter = EncryptConverter.class)
   @Column(name="bank_name",nullable = false)
   private String bankName;
 
   // 암호화
+  @Convert(converter = EncryptConverter.class)
   @Column(nullable = true)
   private String memo;
 

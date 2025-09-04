@@ -41,7 +41,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     ResponseCookie cookie = createCookie("Authorization", token, isLocal);
     response.addHeader("Set-Cookie", cookie.toString());
 
-    response.sendRedirect( isLocalReferer(request) ? "https://localhost:5173/auth/callback/" : "https://localhost:5173/auth/callback/");
+    response.sendRedirect( isLocalReferer(request) ? "http://localhost:5173/auth/callback/" : "https://stopusing.klr.kr/auth/callback/");
   }
 
   /** 쿠키 생성 메서드 */
