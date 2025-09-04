@@ -41,7 +41,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     ResponseCookie cookie = createCookie("Authorization", token, isLocal);
     response.addHeader("Set-Cookie", cookie.toString());
 
-    response.sendRedirect( isLocal ? "http://localhost:3000/" : "https://stopusing.klr.kr/auth/callback/");
+    response.sendRedirect( isLocalReferer(request) ? "http://localhost:5173/auth/callback/" : "https://stopusing.klr.kr/auth/callback/");
   }
 
   /** 쿠키 생성 메서드 */
@@ -56,9 +56,9 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
   }
 
   /** Referer를 기반으로 로컬 환경 여부 판단 */
-//  private boolean isLocalReferer(HttpServletRequest request) {
-//    String referer = request.getHeader("Referer");
-//    if (referer == null) return false;
-//    return referer.contains("localhost") || referer.contains("127.0.0.1");
-//  }
+  private boolean isLocalReferer(HttpServletRequest request) {
+    String referer = request.getHeader("Referer");
+    if (referer == null || referer.isEmpty()) return false;
+    return referer.contains("localhost") || referer.contains("127.0.0.1");
+  }
 }
