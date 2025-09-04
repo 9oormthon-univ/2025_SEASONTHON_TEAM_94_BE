@@ -37,15 +37,19 @@ public class Transaction extends BaseEntity {
   @Column(name = "started_at", columnDefinition = "TIMESTAMP(6)", nullable = false)
   private LocalDateTime startedAt;
 
+  //암호화
   @Column(nullable = false)
   private Long price;
 
+  // 암호화
   @Column(nullable = false)
   private String title;
 
+  // 암호화
   @Column(name="bank_name",nullable = false)
   private String bankName;
 
+  // 암호화
   @Column(nullable = true)
   private String memo;
 

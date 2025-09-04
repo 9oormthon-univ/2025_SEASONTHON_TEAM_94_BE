@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -33,18 +34,31 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
     String token = jwtUtils.createJwt(userUid ,username, role, 60*60*60L);
 
-    response.addCookie(createCookie("Authorization", token));
-    response.sendRedirect("https://stopusing.klr.kr/auth/callback");
+    // 로컬 환경 여부 체크
+    boolean isLocal = true;
+
+    // ResponseCookie 생성 및 추가
+    ResponseCookie cookie = createCookie("Authorization", token, isLocal);
+    response.addHeader("Set-Cookie", cookie.toString());
+
+    response.sendRedirect( isLocal ? "http://localhost:3000/" : "https://stopusing.klr.kr/auth/callback/");
   }
 
-  private Cookie createCookie(String key, String value) {
-
-    Cookie cookie = new Cookie(key, value);
-    cookie.setMaxAge(60*60*60);
-    //cookie.setSecure(true);
-    cookie.setPath("/");
-    cookie.setHttpOnly(false);
-
-    return cookie;
+  /** 쿠키 생성 메서드 */
+  public ResponseCookie createCookie(String key, String value, boolean isLocal) {
+    return ResponseCookie.from(key, value)
+        .httpOnly(false)
+        .secure(!isLocal)                // 로컬이면 secure 비활성화
+        .sameSite(isLocal ? "None" : "Lax")
+        .maxAge(60 * 60 * 60 * 10)
+        .path("/")
+        .build();
   }
+
+  /** Referer를 기반으로 로컬 환경 여부 판단 */
+//  private boolean isLocalReferer(HttpServletRequest request) {
+//    String referer = request.getHeader("Referer");
+//    if (referer == null) return false;
+//    return referer.contains("localhost") || referer.contains("127.0.0.1");
+//  }
 }
