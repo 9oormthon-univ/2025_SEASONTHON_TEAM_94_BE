@@ -34,7 +34,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     String token = jwtUtils.createJwt(userUid ,username, role, 60*60*60L);
 
     response.addCookie(createCookie("Authorization", token));
-    response.sendRedirect("https://stopusing.klr.kr/");
+    response.sendRedirect("https://stopusing.klr.kr/auth/callback");
   }
 
   private Cookie createCookie(String key, String value) {
