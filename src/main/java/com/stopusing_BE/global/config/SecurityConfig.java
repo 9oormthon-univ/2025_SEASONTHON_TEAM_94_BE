@@ -9,6 +9,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -42,9 +43,9 @@ public class SecurityConfig {
     CorsConfiguration cfg = new CorsConfiguration();
     cfg.setAllowCredentials(true);
     // 정확 매칭
-    cfg.setAllowedOrigins(List.of("http://localhost:3000","http://localhost:5173","https://stopusing.klr.kr"));
+    cfg.setAllowedOrigins(List.of("http://localhost:3000","http://localhost:5173","https://localhost:5173","https://stopusing.klr.kr"));
     // 또는 패턴 허용(선택) — 127.0.0.1, 포트 변경 대비
-    cfg.setAllowedOriginPatterns(List.of("http://localhost:*","http://127.0.0.1:*","https://stopusing.klr.kr"));
+    cfg.setAllowedOriginPatterns(List.of("http://localhost:*","https://localhost:*","http://127.0.0.1:*","https://stopusing.klr.kr"));
 
     // 개발 중에는 전체 허용이 덜 헷갈립니다
     cfg.addAllowedHeader("*");
