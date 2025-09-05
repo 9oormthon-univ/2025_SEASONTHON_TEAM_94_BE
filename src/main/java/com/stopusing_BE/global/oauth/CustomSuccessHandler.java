@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -35,30 +36,36 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     String token = jwtUtils.createJwt(userUid ,username, role, 60*60*60L);
 
     // 로컬 환경 여부 체크
-    boolean isLocal = true;
+    boolean isLocal = isLocalReferer(request);
 
     // ResponseCookie 생성 및 추가
-    ResponseCookie cookie = createCookie("Authorization", token, isLocal);
-    response.addHeader("Set-Cookie", cookie.toString());
+    ResponseCookie cookie = createCookie("Authorization", token);
+    response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
-    response.sendRedirect( isLocalReferer(request) ? "http://localhost:5173/auth/callback/" : "https://stopusing.klr.kr/auth/callback/");
+    response.sendRedirect( isLocal ? "https://localhost:5173/auth/callback/" : "https://stopusing.klr.kr/auth/callback/");
   }
 
   /** 쿠키 생성 메서드 */
-  public ResponseCookie createCookie(String key, String value, boolean isLocal) {
+  public ResponseCookie createCookie(String key, String value) {
     return ResponseCookie.from(key, value)
-        .httpOnly(false)
+        .httpOnly(true)
         .secure(true)
-        .sameSite(isLocal ? "None" : "Lax")
+        .sameSite("None")
         .maxAge(60 * 60 * 60 * 10)
         .path("/")
         .build();
   }
 
-  /** Referer를 기반으로 로컬 환경 여부 판단 */
+  /** 요청 정보를 기반으로 로컬 환경 여부 판단 */
   private boolean isLocalReferer(HttpServletRequest request) {
-    String referer = request.getHeader("Referer");
-    if (referer == null || referer.isEmpty()) return false;
-    return referer.contains("localhost") || referer.contains("127.0.0.1");
+    return isLocalHost(request.getHeader("Host")) ||
+           isLocalHost(request.getHeader("X-Forwarded-Host")) ||
+           isLocalHost(request.getServerName()) ||
+           isLocalHost(request.getHeader("Referer"));
+  }
+
+  /** 호스트 정보가 로컬 환경인지 확인 */
+  private boolean isLocalHost(String host) {
+    return host != null && (host.contains("localhost") || host.contains("127.0.0.1") || host.contains("kauth.kakao.com"));
   }
 }

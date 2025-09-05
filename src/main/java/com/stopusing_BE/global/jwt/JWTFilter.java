@@ -36,6 +36,16 @@ public class JWTFilter extends OncePerRequestFilter {
 
     String requestUri = request.getRequestURI();
 
+    // Swagger 경로 제외
+    if (requestUri.startsWith("/swagger-ui") || 
+        requestUri.startsWith("/v3/api-docs") || 
+        requestUri.startsWith("/swagger-resources") || 
+        requestUri.startsWith("/webjars") ||
+        requestUri.equals("/favicon.ico")) {
+      filterChain.doFilter(request, response);
+      return;
+    }
+
     if (requestUri.matches("^\\/login(?:\\/.*)?$")) {
 
       filterChain.doFilter(request, response);
