@@ -53,6 +53,7 @@ public class TransactionService {
         .startedAt(request.getStartAt() != null ? request.getStartAt() : LocalDateTime.now())
         .price(request.getPrice())
         .title(request.getTitle())
+        .memo(request.getMemo())
         .splitCount(request.getSplitCount() != null ? request.getSplitCount() : 1)
         .bankName(request.getBankName())
         .user(user)

@@ -29,6 +29,8 @@ public class TransactionCreateRequest {
   @NotBlank(message = "더치페이 인원수를 입력해주세요")
   private Integer splitCount;
 
+  private String memo;
+
   private TransactionType type;
 
   private TransactionCategory category;
