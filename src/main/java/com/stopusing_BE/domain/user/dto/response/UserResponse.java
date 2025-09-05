@@ -12,6 +12,7 @@ public class UserResponse {
   private String username;
   private String nickname;
   private String email;
+  private Boolean isRegistered;
 
   public static UserResponse fromEntity(User user) {
     return UserResponse.builder()
@@ -20,6 +21,7 @@ public class UserResponse {
         .username(user.getUsername())
         .nickname(user.getNickname())
         .email(user.getEmail())
+        .isRegistered(user.getIsRegistered())
         .build();
   }
 

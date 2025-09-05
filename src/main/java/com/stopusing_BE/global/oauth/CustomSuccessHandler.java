@@ -33,7 +33,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     GrantedAuthority auth = iterator.next();
     String role = auth.getAuthority();
 
-    String token = jwtUtils.createJwt(userUid ,username, role, 60*60*60L);
+    String token = jwtUtils.createJwt(userUid ,username, role, 60*60*1000L);
 
     // 로컬 환경 여부 체크
     boolean isLocal = isLocalReferer(request);
@@ -51,7 +51,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         .httpOnly(true)
         .secure(true)
         .sameSite("None")
-        .maxAge(60 * 60 * 60 * 10)
+        .maxAge(60 * 60)
         .path("/")
         .build();
   }

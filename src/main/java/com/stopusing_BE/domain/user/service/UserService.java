@@ -42,7 +42,9 @@ public class UserService {
     return UserResponse.fromEntity(user);
   }
 
-
-
-
+  @Transactional
+  public void setRegistered(String userUid) {
+    User user = getByIdOrThrow(userUid);
+    user.setIsRegistered(true);
+  }
 }

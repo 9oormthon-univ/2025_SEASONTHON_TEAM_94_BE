@@ -23,6 +23,10 @@ public class BudgetGoalManager {
     public BudgetGoalResponse create(String userUid ,BudgetGoalCreateRequest request) {
       User user = userService.getByIdOrThrow(userUid);
       BudgetGoal budgetGoal = budgetGoalService.create(user, request);
+      
+      // 목표 지출 생성 시 사용자를 가입 완료 상태로 변경
+      userService.setRegistered(userUid);
+      
       return BudgetGoalResponse.fromEntity(budgetGoal);
     }
 

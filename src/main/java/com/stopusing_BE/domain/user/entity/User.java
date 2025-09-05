@@ -34,6 +34,9 @@ public class User extends BaseEntity {
   private String nickname;
   private String email;
   private String role;
+  
+  @Builder.Default
+  private Boolean isRegistered = false;
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
   @Builder.Default
