@@ -2,6 +2,7 @@ package com.stopusing_BE.domain.transaction.manager;
 
 import com.stopusing_BE.domain.transaction.dto.request.TransactionCreateByAlertRequest;
 import com.stopusing_BE.domain.transaction.dto.request.TransactionCreateRequest;
+import com.stopusing_BE.domain.transaction.dto.request.TransactionTypeUpdateRequest;
 import com.stopusing_BE.domain.transaction.dto.request.TransactionUpdateRequest;
 import com.stopusing_BE.domain.transaction.dto.response.TransactionCalendarResponse;
 import com.stopusing_BE.domain.transaction.dto.response.TransactionCategoryResponse;
@@ -190,6 +191,12 @@ public class TransactionUsecaseManager {
     return transactionCategoryService.getAll();
   }
 
+  @Transactional
+  public TransactionResponse updateTypeByAlert(TransactionTypeUpdateRequest request) {
+    User user = userService.getByIdOrThrow(request.getUserUid());
+    Transaction transaction = transactionService.updateTypeByAlert(request);
+    return TransactionResponse.fromEntity(transaction);
+  }
 
 }
 

@@ -73,4 +73,8 @@ public class Transaction extends BaseEntity {
   @JoinColumn(name = "user_uid")
   private User user;
 
+  public void updateType(TransactionType type) {
+    this.type = type;
+  }
+
 }

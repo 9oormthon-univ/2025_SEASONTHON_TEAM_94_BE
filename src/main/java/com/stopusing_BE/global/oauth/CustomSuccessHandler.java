@@ -66,6 +66,6 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
   /** 호스트 정보가 로컬 환경인지 확인 */
   private boolean isLocalHost(String host) {
-    return host != null && (host.contains("localhost") || host.contains("127.0.0.1") || host.contains("kauth.kakao.com"));
+    return host != null && (host.contains("localhost") || host.contains("127.0.0.1"));
   }
 }
