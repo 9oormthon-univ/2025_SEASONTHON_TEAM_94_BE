@@ -22,6 +22,7 @@ public enum ErrorCode implements BaseErrorCode {
 
   // 403 FORBIDDEN
   FORBIDDEN(HttpStatus.FORBIDDEN, "403_001", "접근이 거부되었습니다."),
+  FORBIDDEN_PREMIUM(HttpStatus.FORBIDDEN, "403_002", "프리미엄 서비스가 아닙니다."),
 
   // 404 NOT FOUND
   RESOURCE_NOT_FOUND(HttpStatus.NOT_FOUND, "404_001", "요청한 리소스를 찾을 수 없습니다."),

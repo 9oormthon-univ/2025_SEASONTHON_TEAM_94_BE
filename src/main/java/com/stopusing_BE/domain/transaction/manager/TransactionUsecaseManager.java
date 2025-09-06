@@ -65,6 +65,29 @@ public class TransactionUsecaseManager {
   public List<TransactionResponse> getAllByTypeAndRange(String userUid, TransactionType type,
       LocalDate startAt, LocalDate endAt) {
 
+    // 사용자 조회
+    User user = userService.getByIdOrThrow(userUid);
+
+    // premium이 아닌 경우 6개월 제한 적용
+    if (!user.getIsPremium()) {
+      LocalDate sixMonthsAgo = LocalDate.now().minusMonths(6);
+
+      // startAt만 있는 경우 → startAt이 제한 이전이면 forbidden
+      if (startAt != null && startAt.isBefore(sixMonthsAgo)) {
+        throw new CustomException(ErrorCode.FORBIDDEN_PREMIUM, "무료 사용자는 6개월 이전 데이터에 접근할 수 없습니다.");
+      }
+
+      // endAt만 있는 경우 → endAt이 제한 이전이면 forbidden
+      if (startAt == null && endAt != null && endAt.isBefore(sixMonthsAgo)) {
+        throw new CustomException(ErrorCode.FORBIDDEN_PREMIUM, "무료 사용자는 6개월 이전 데이터에 접근할 수 없습니다.");
+      }
+
+      // 둘 다 있는 경우 → 조회 구간이 제한 이전까지 포함하면 forbidden
+      if (startAt != null && endAt != null && endAt.isBefore(sixMonthsAgo)) {
+        throw new CustomException(ErrorCode.FORBIDDEN_PREMIUM, "무료 사용자는 6개월 이전 데이터에 접근할 수 없습니다.");
+      }
+    }
+
     // 1) 둘 다 null → 타입만
     if (startAt == null && endAt == null) {
       return transactionService.getAllByType(userUid, type).stream().map(TransactionResponse::fromEntity).collect(Collectors.toList());
@@ -145,6 +168,17 @@ public class TransactionUsecaseManager {
   @Transactional(readOnly = true)
   public TransactionCalendarResponse getTotalPricesByType(
       String userUid, TransactionType type, LocalDate date) {
+
+    // 사용자 조회
+    User user = userService.getByIdOrThrow(userUid);
+
+    // 무료 사용자라면 6개월 이전 조회 차단
+    if (!user.getIsPremium()) {
+      LocalDate sixMonthsAgo = LocalDate.now().minusMonths(6);
+      if (date.isBefore(sixMonthsAgo)) {
+        throw new CustomException(ErrorCode.FORBIDDEN_PREMIUM, "무료 사용자는 6개월 이전 데이터에 접근할 수 없습니다.");
+      }
+    }
 
     int year = date.getYear();
     int month = date.getMonthValue();
