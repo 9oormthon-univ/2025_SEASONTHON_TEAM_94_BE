@@ -63,71 +63,83 @@ public class TransactionUsecaseManager {
     return TransactionResponse.fromEntity(transaction);
   }
 
-
   @Transactional(readOnly = true)
-  public List<TransactionResponse> getAllByTypeAndRange(String userUid, TransactionType type,
-      LocalDate startAt, LocalDate endAt) {
+  public List<TransactionResponse> getAllByTypeAndRange(
+      String userUid, TransactionType type, LocalDate startAt, LocalDate endAt) {
+
+    // 공통 타임존: 한국 표준시
+    final ZoneId seoulZone = ZoneId.of("Asia/Seoul");
 
     // 사용자 조회
     User user = userService.getByIdOrThrow(userUid);
 
-    // premium이 아닌 경우 6개월 제한 적용
+    // 무료 6개월 제한 (KST 기준 날짜)
     if (!user.getIsPremium()) {
-      LocalDate sixMonthsAgo = LocalDate.now(ZoneId.of("Asia/Seoul")).minusMonths(6);
+      LocalDate sixMonthsAgo = LocalDate.now(seoulZone).minusMonths(6);
 
-      if (startAt != null && startAt.isBefore(sixMonthsAgo)) {
+      // startAt만 있는 경우 → startAt이 제한 이전이면 forbidden
+      if (startAt != null && endAt == null && startAt.isBefore(sixMonthsAgo)) {
         throw new CustomException(ErrorCode.FORBIDDEN_PREMIUM, "무료 사용자는 6개월 이전 데이터에 접근할 수 없습니다.");
       }
 
+      // endAt만 있는 경우 → endAt이 제한 이전이면 forbidden
       if (startAt == null && endAt != null && endAt.isBefore(sixMonthsAgo)) {
         throw new CustomException(ErrorCode.FORBIDDEN_PREMIUM, "무료 사용자는 6개월 이전 데이터에 접근할 수 없습니다.");
       }
 
-      if (startAt != null && endAt != null && endAt.isBefore(sixMonthsAgo)) {
+      // 둘 다 있는 경우 → 조회 구간에 제한 이전 날짜가 포함되면 forbidden
+      if (startAt != null && endAt != null && startAt.isBefore(sixMonthsAgo)) {
         throw new CustomException(ErrorCode.FORBIDDEN_PREMIUM, "무료 사용자는 6개월 이전 데이터에 접근할 수 없습니다.");
       }
     }
 
-    ZoneId seoulZone = ZoneId.of("Asia/Seoul");
-
-    // 1) 둘 다 null
+    // 1) 둘 다 null → 타입만 조회
     if (startAt == null && endAt == null) {
       return transactionService.getAllByType(userUid, type)
-          .stream().map(TransactionResponse::fromEntity).collect(Collectors.toList());
+          .stream()
+          .map(TransactionResponse::fromEntity)
+          .collect(Collectors.toList());
     }
 
-    // 2) startAt 있음
+    // 2) startAt 있음 → [startAt(00:00 KST), now(KST))  (끝 exclusive)
     if (startAt != null && endAt == null) {
-      LocalDateTime start = startAt.atStartOfDay(seoulZone).toLocalDateTime();
-      LocalDateTime endEx = ZonedDateTime.now(seoulZone).toLocalDateTime();
+      LocalDateTime start = startAt.atStartOfDay(seoulZone).toLocalDateTime();  // inclusive
+      LocalDateTime endEx = ZonedDateTime.now(seoulZone).toLocalDateTime();     // exclusive (현재 시각)
 
+      // 같은 날(== 오늘 00:00)도 허용, 미래만 금지
       if (start.isAfter(endEx)) {
-        throw new CustomException(ErrorCode.INVALID_REQUEST, "startAt가 현재보다 빠릅니다.");
+        throw new CustomException(ErrorCode.INVALID_REQUEST, "startAt가 현재 일자를 넘었습니다.");
       }
 
       return transactionService.getByTypeAndDateRange(userUid, type, start, endEx)
-          .stream().map(TransactionResponse::fromEntity).collect(Collectors.toList());
+          .stream()
+          .map(TransactionResponse::fromEntity)
+          .collect(Collectors.toList());
     }
 
-    // 3) endDate만 있음
+    // 3) endAt만 있음 → (-∞, endAt+1일 00:00 KST)  (끝 exclusive)
     if (startAt == null) {
-      LocalDateTime endEx = endAt.plusDays(1).atStartOfDay(seoulZone).toLocalDateTime();
+      LocalDateTime endEx = endAt.plusDays(1).atStartOfDay(seoulZone).toLocalDateTime(); // exclusive
       return transactionService.getByTypeAndStartAtLessThan(userUid, type, endEx)
-          .stream().map(TransactionResponse::fromEntity).collect(Collectors.toList());
+          .stream()
+          .map(TransactionResponse::fromEntity)
+          .collect(Collectors.toList());
     }
 
-    // 4) 둘 다 있음
-    LocalDateTime start = startAt.atStartOfDay(seoulZone).toLocalDateTime();
-    LocalDateTime endEx = endAt.plusDays(1).atStartOfDay(seoulZone).toLocalDateTime();
+    // 4) 둘 다 있음 → [startAt(00:00 KST), endAt+1일 00:00 KST)  (끝 exclusive)
+    LocalDateTime start = startAt.atStartOfDay(seoulZone).toLocalDateTime();           // inclusive
+    LocalDateTime endEx = endAt.plusDays(1).atStartOfDay(seoulZone).toLocalDateTime(); // exclusive
 
+    // 시작이 현재(KST)보다 미래이면 금지
     if (start.isAfter(ZonedDateTime.now(seoulZone).toLocalDateTime())) {
       throw new CustomException(ErrorCode.INVALID_REQUEST, "StartAt 가 현재 일자를 넘었습니다.");
     }
 
     return transactionService.getByTypeAndDateRange(userUid, type, start, endEx)
-        .stream().map(TransactionResponse::fromEntity).collect(Collectors.toList());
+        .stream()
+        .map(TransactionResponse::fromEntity)
+        .collect(Collectors.toList());
   }
-
 
   public TransactionReportResponse buildReport(List<TransactionResponse> items) {
     if (items == null || items.isEmpty()) {
@@ -174,14 +186,11 @@ public class TransactionUsecaseManager {
     // 사용자 조회
     User user = userService.getByIdOrThrow(userUid);
 
-    ZoneId seoulZone = ZoneId.of("Asia/Seoul");
-
     // 무료 사용자라면 6개월 이전 조회 차단
     if (!user.getIsPremium()) {
-      LocalDate sixMonthsAgo = LocalDate.now(seoulZone).minusMonths(6);
+      LocalDate sixMonthsAgo = LocalDate.now().minusMonths(6);
       if (date.isBefore(sixMonthsAgo)) {
-        throw new CustomException(ErrorCode.FORBIDDEN_PREMIUM,
-            "무료 사용자는 6개월 이전 데이터에 접근할 수 없습니다.");
+        throw new CustomException(ErrorCode.FORBIDDEN_PREMIUM, "무료 사용자는 6개월 이전 데이터에 접근할 수 없습니다.");
       }
     }
 
@@ -189,10 +198,8 @@ public class TransactionUsecaseManager {
     int month = date.getMonthValue();
 
     LocalDate firstDay = LocalDate.of(year, month, 1);
-
-    // ✅ 한국 표준시 기준으로 변환
-    LocalDateTime start = firstDay.atStartOfDay(seoulZone).toLocalDateTime();         // yyyy-MM-01 00:00 (KST)
-    LocalDateTime end = firstDay.plusMonths(1).atStartOfDay(seoulZone).toLocalDateTime(); // 다음달 01 00:00 (KST)
+    LocalDateTime start = firstDay.atStartOfDay();                 // yyyy-MM-01 00:00
+    LocalDateTime end = firstDay.plusMonths(1).atStartOfDay();     // 다음달 01 00:00  (주의: plusDays가 아님!)
 
     int daysInMonth = firstDay.lengthOfMonth();
     Map<Long, Long> result = new LinkedHashMap<>();
@@ -203,11 +210,7 @@ public class TransactionUsecaseManager {
         transactionService.getByTypeAndDateRange(userUid, type, start, end);
 
     for (Transaction tx : transactions) {
-      // ✅ DB에서 가져온 startedAt이 UTC라면 변환 필요 여부 확인
-      LocalDate startDate = tx.getStartedAt().atZone(ZoneId.of("UTC"))
-          .withZoneSameInstant(seoulZone)
-          .toLocalDate();
-
+      LocalDate startDate = tx.getStartedAt().toLocalDate();
       long day = startDate.getDayOfMonth();
       result.merge(day, tx.getPrice(), Long::sum);
     }
