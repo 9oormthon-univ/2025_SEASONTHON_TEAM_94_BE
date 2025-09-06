@@ -3,6 +3,7 @@ package com.stopusing_BE.domain.transaction.spec;
 import com.stopusing_BE.domain.transaction.dto.request.TransactionCreateByAlertRequest;
 import com.stopusing_BE.domain.transaction.dto.request.TransactionCreateRequest;
 import com.stopusing_BE.domain.transaction.dto.request.TransactionUpdateRequest;
+import com.stopusing_BE.domain.transaction.dto.response.TransactionCalendarResponse;
 import com.stopusing_BE.domain.transaction.dto.response.TransactionCategoryResponse;
 import com.stopusing_BE.domain.transaction.dto.response.TransactionReportResponse;
 import com.stopusing_BE.domain.transaction.dto.response.TransactionResponse;
@@ -53,8 +54,16 @@ public interface TransactionSpec {
       @RequestParam TransactionType type,
       @RequestParam(required = false) @DateTimeFormat(pattern="yyyy-MM-dd") LocalDate startAt,
       @RequestParam(required = false) @DateTimeFormat(pattern="yyyy-MM-dd") LocalDate endAt
-
   );
+
+  @Operation(summary = "지출 캘린더를 위한 월별 내역 조회", description = "지출 캘린더를 위한 월별 내역 조회")
+  ApiResponse<TransactionCalendarResponse> getTotalPricesByType(
+      @AuthenticationPrincipal CustomOAuth2UserResponse currentUser,
+      @RequestParam TransactionType type,
+      @RequestParam(required = false) @DateTimeFormat(pattern="yyyy-MM-dd") LocalDate date
+  );
+
+
 
   @Operation(summary = "지출 내역 수정", description = "지출 내역을 수정합니다.")
   ApiResponse<TransactionResponse> update(

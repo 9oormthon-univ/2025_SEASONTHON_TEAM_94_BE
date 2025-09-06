@@ -3,6 +3,7 @@ package com.stopusing_BE.domain.transaction.manager;
 import com.stopusing_BE.domain.transaction.dto.request.TransactionCreateByAlertRequest;
 import com.stopusing_BE.domain.transaction.dto.request.TransactionCreateRequest;
 import com.stopusing_BE.domain.transaction.dto.request.TransactionUpdateRequest;
+import com.stopusing_BE.domain.transaction.dto.response.TransactionCalendarResponse;
 import com.stopusing_BE.domain.transaction.dto.response.TransactionCategoryResponse;
 import com.stopusing_BE.domain.transaction.dto.response.TransactionReportResponse;
 import com.stopusing_BE.domain.transaction.dto.response.TransactionResponse;
@@ -18,7 +19,9 @@ import com.stopusing_BE.global.common.exception.CustomException;
 import com.stopusing_BE.global.common.exception.code.ErrorCode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -137,6 +140,37 @@ public class TransactionUsecaseManager {
         .endAt(endAt)
         .build();
   }
+
+  @Transactional(readOnly = true)
+  public TransactionCalendarResponse getTotalPricesByType(
+      String userUid, TransactionType type, LocalDate date) {
+
+    int year = date.getYear();
+    int month = date.getMonthValue();
+
+    LocalDate firstDay = LocalDate.of(year, month, 1);
+    LocalDateTime start = firstDay.atStartOfDay();                 // yyyy-MM-01 00:00
+    LocalDateTime end = firstDay.plusMonths(1).atStartOfDay();     // 다음달 01 00:00  (주의: plusDays가 아님!)
+
+    int daysInMonth = firstDay.lengthOfMonth();
+    Map<Long, Long> result = new LinkedHashMap<>();
+    for (int d = 1; d <= daysInMonth; d++) result.put((long) d, 0L);
+
+    // [start, end) 범위로 이미 한 달치만 조회된다고 가정
+    List<Transaction> transactions =
+        transactionService.getByTypeAndDateRange(userUid, type, start, end);
+
+    for (Transaction tx : transactions) {
+      LocalDate startDate = tx.getStartedAt().toLocalDate();
+      long day = startDate.getDayOfMonth();
+      result.merge(day, tx.getPrice(), Long::sum);
+    }
+
+    return TransactionCalendarResponse.builder()
+        .totals(result)
+        .build();
+  }
+
 
   @Transactional
   public TransactionResponse update(TransactionUpdateRequest request,String userUid,Long id) {

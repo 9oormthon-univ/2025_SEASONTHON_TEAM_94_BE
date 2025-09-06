@@ -3,6 +3,7 @@ package com.stopusing_BE.domain.transaction.controller;
 import com.stopusing_BE.domain.transaction.dto.request.TransactionCreateByAlertRequest;
 import com.stopusing_BE.domain.transaction.dto.request.TransactionCreateRequest;
 import com.stopusing_BE.domain.transaction.dto.request.TransactionUpdateRequest;
+import com.stopusing_BE.domain.transaction.dto.response.TransactionCalendarResponse;
 import com.stopusing_BE.domain.transaction.dto.response.TransactionCategoryResponse;
 import com.stopusing_BE.domain.transaction.dto.response.TransactionReportResponse;
 import com.stopusing_BE.domain.transaction.dto.response.TransactionResponse;
@@ -76,6 +77,16 @@ public class TransactionController implements TransactionSpec {
     TransactionReportResponse transactionReportResponse = transactionManager.buildReport(list);
     return ApiResponse.success(transactionReportResponse);
   }
+
+  @Override
+  @GetMapping("/calendar")
+  public ApiResponse<TransactionCalendarResponse> getTotalPricesByType(
+      CustomOAuth2UserResponse currentUser, TransactionType type, LocalDate date) {
+    String userUid = currentUser.getUserUid();
+    TransactionCalendarResponse transactionCalendarResponse = transactionManager.getTotalPricesByType(userUid, type, date);
+    return ApiResponse.success(transactionCalendarResponse);
+  }
+
 
   @Override
   @PutMapping("/{id}")
