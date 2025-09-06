@@ -4,6 +4,7 @@ package com.stopusing_BE.domain.transaction.service;
 import com.stopusing_BE.domain.transaction.dto.request.TransactionCreateByAlertRequest;
 import com.stopusing_BE.domain.transaction.dto.request.TransactionCreateRequest;
 import com.stopusing_BE.domain.transaction.dto.request.TransactionUpdateRequest;
+import com.stopusing_BE.domain.transaction.dto.request.TransactionTypeUpdateRequest;
 import com.stopusing_BE.domain.transaction.entity.Transaction;
 import com.stopusing_BE.domain.transaction.entity.TransactionCategory;
 import com.stopusing_BE.domain.transaction.entity.TransactionType;
@@ -123,10 +124,20 @@ public class TransactionService {
     );
   }
 
-
-
-
-
-
+  @Transactional
+  public Transaction updateTypeByAlert(TransactionTypeUpdateRequest request) {
+    // userUid와 type이 NONE인 거래 중에서 가장 최근 것을 찾아서 업데이트
+    List<Transaction> noneTransactions = transactionRepository
+        .findByUser_UidAndTypeOrderByStartedAtDesc(request.getUserUid(), TransactionType.NONE);
+    
+    if (noneTransactions.isEmpty()) {
+      throw new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "변경할 거래 내역이 없습니다.");
+    }
+    
+    Transaction transaction = noneTransactions.get(0);
+    transaction.updateType(request.getType());
+    
+    return transactionRepository.save(transaction);
+  }
 
 }

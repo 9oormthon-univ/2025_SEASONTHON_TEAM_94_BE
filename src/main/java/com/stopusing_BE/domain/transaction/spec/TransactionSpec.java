@@ -3,6 +3,7 @@ package com.stopusing_BE.domain.transaction.spec;
 import com.stopusing_BE.domain.transaction.dto.request.TransactionCreateByAlertRequest;
 import com.stopusing_BE.domain.transaction.dto.request.TransactionCreateRequest;
 import com.stopusing_BE.domain.transaction.dto.request.TransactionUpdateRequest;
+import com.stopusing_BE.domain.transaction.dto.request.TransactionTypeUpdateRequest;
 import com.stopusing_BE.domain.transaction.dto.response.TransactionCategoryResponse;
 import com.stopusing_BE.domain.transaction.dto.response.TransactionReportResponse;
 import com.stopusing_BE.domain.transaction.dto.response.TransactionResponse;
@@ -75,5 +76,10 @@ public interface TransactionSpec {
 
 
 
+
+  @Operation(summary = "Transaction Type 변경", description = "알림으로 생성된 Transaction의 Type을 변경합니다.")
+  ApiResponse<TransactionResponse> updateTypeByAlert(
+      @RequestBody @Validated TransactionTypeUpdateRequest request
+  );
 
 }

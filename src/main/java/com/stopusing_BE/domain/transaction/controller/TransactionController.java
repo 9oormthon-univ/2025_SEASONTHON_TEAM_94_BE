@@ -3,6 +3,7 @@ package com.stopusing_BE.domain.transaction.controller;
 import com.stopusing_BE.domain.transaction.dto.request.TransactionCreateByAlertRequest;
 import com.stopusing_BE.domain.transaction.dto.request.TransactionCreateRequest;
 import com.stopusing_BE.domain.transaction.dto.request.TransactionUpdateRequest;
+import com.stopusing_BE.domain.transaction.dto.request.TransactionTypeUpdateRequest;
 import com.stopusing_BE.domain.transaction.dto.response.TransactionCategoryResponse;
 import com.stopusing_BE.domain.transaction.dto.response.TransactionReportResponse;
 import com.stopusing_BE.domain.transaction.dto.response.TransactionResponse;
@@ -104,5 +105,11 @@ public class TransactionController implements TransactionSpec {
     return ApiResponse.success(response);
   }
 
+  @Override
+  @PutMapping("/alarm")
+  public ApiResponse<TransactionResponse> updateTypeByAlert(TransactionTypeUpdateRequest request) {
+    TransactionResponse transactionResponse = transactionManager.updateTypeByAlert(request);
+    return ApiResponse.success(transactionResponse);
+  }
 
 }
