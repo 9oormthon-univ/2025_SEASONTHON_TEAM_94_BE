@@ -13,6 +13,7 @@ import com.stopusing_BE.domain.transaction.manager.TransactionUsecaseManager;
 import com.stopusing_BE.domain.transaction.spec.TransactionSpec;
 import com.stopusing_BE.global.common.exception.response.ApiResponse;
 import com.stopusing_BE.global.oauth.dto.response.CustomOAuth2UserResponse;
+import jakarta.websocket.server.PathParam;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,13 @@ public class TransactionController implements TransactionSpec {
   public ApiResponse<TransactionResponse> createByAlert(TransactionCreateByAlertRequest request) {
         TransactionResponse transactionResponse = transactionManager.createByAlert(request);
         return ApiResponse.success(transactionResponse);
+  }
+
+  @Override
+  @PutMapping("/alarm")
+  public ApiResponse<TransactionResponse> updateTypeByAlert(TransactionTypeUpdateRequest request) {
+    TransactionResponse transactionResponse = transactionManager.updateTypeByAlert(request);
+    return ApiResponse.success(transactionResponse);
   }
 
   @Override
@@ -114,13 +122,6 @@ public class TransactionController implements TransactionSpec {
   public ApiResponse<List<TransactionCategoryResponse>> getAllCategories() {
     List<TransactionCategoryResponse> response = transactionManager.getAllCategories();
     return ApiResponse.success(response);
-  }
-
-  @Override
-  @PutMapping("/alarm")
-  public ApiResponse<TransactionResponse> updateTypeByAlert(TransactionTypeUpdateRequest request) {
-    TransactionResponse transactionResponse = transactionManager.updateTypeByAlert(request);
-    return ApiResponse.success(transactionResponse);
   }
 
 }

@@ -14,8 +14,6 @@ public class TransactionCreateByAlertRequest {
   @NotNull(message = "가격은 필수 입력 값입니다.")
   private Long price;
 
-  private LocalDateTime startAt;
-
   @NotBlank(message = "거래 제목은 필수 입력 값입니다.")
   private String title;
 

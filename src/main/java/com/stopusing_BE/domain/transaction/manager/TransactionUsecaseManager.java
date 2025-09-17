@@ -186,7 +186,7 @@ public class TransactionUsecaseManager {
     // 사용자 조회
     User user = userService.getByIdOrThrow(userUid);
 
-    // 무료 사용자라면 6개월 이전 조회 차단
+    // 무료 사용자라면 6개월 이전 조회 차단 (KST 기준)
     if (!user.getIsPremium()) {
       LocalDate sixMonthsAgo = LocalDate.now().minusMonths(6);
       if (date.isBefore(sixMonthsAgo)) {
@@ -198,8 +198,8 @@ public class TransactionUsecaseManager {
     int month = date.getMonthValue();
 
     LocalDate firstDay = LocalDate.of(year, month, 1);
-    LocalDateTime start = firstDay.atStartOfDay();                 // yyyy-MM-01 00:00
-    LocalDateTime end = firstDay.plusMonths(1).atStartOfDay();     // 다음달 01 00:00  (주의: plusDays가 아님!)
+    LocalDateTime start = firstDay.atStartOfDay();                 // yyyy-MM-01 00:00 (KST)
+    LocalDateTime end = firstDay.plusMonths(1).atStartOfDay();     // 다음달 01 00:00 (KST)
 
     int daysInMonth = firstDay.lengthOfMonth();
     Map<Long, Long> result = new LinkedHashMap<>();

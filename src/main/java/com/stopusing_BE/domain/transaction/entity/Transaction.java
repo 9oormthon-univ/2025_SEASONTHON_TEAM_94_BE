@@ -13,6 +13,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
@@ -53,8 +54,9 @@ public class Transaction extends BaseEntity {
   private String bankName;
 
   // 암호화
+  @Lob
+  @Column(columnDefinition = "LONGTEXT")
   @Convert(converter = EncryptConverter.class)
-  @Column(nullable = true)
   private String memo;
 
   // 더치페이 명수를 위한 필드 추가

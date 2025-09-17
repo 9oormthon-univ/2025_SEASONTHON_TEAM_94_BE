@@ -34,7 +34,7 @@ public class TransactionService {
         .category(category)
         .memo(request.getMemo())
         .bankName(request.getBankName())
-        .startedAt(request.getStartAt() != null ? request.getStartAt() : LocalDateTime.now())
+        .startedAt(LocalDateTime.now())
         .price(request.getPrice())
         .splitCount(1)
         .title(request.getTitle())
@@ -126,15 +126,13 @@ public class TransactionService {
 
   @Transactional
   public Transaction updateTypeByAlert(TransactionTypeUpdateRequest request) {
-    // userUid와 type이 NONE인 거래 중에서 가장 최근 것을 찾아서 업데이트
-    List<Transaction> noneTransactions = transactionRepository
-        .findByUser_UidAndTypeOrderByStartedAtDesc(request.getUserUid(), TransactionType.NONE);
+    Transaction transaction = getByIdOrThrow(request.getId());
     
-    if (noneTransactions.isEmpty()) {
-      throw new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "변경할 거래 내역이 없습니다.");
+    // 소유자 검사 - request에서 userUid 확인
+    if (!Objects.equals(transaction.getUser().getUid(), request.getUserUid())) {
+      throw new CustomException(ErrorCode.FORBIDDEN, "본인의 거래만 변경할 수 있습니다.");
     }
     
-    Transaction transaction = noneTransactions.get(0);
     transaction.updateType(request.getType());
     
     return transactionRepository.save(transaction);
